@@ -41,6 +41,37 @@ fn main() {
     println!("Can rect1 hold rect3? {}", rect1.can_hold(&rect3));
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn larger_can_hold_smaller() {
+        let larger = Rectangle {
+            length: 8,
+            width: 7,
+        };
+        let smaller = Rectangle {
+            length: 5,
+            width: 1,
+        };
+        assert!(larger.can_hold(&smaller));
+    }
+
+    #[test]
+    fn smaller_cannot_hold_longer() {
+        let larger = Rectangle {
+            length: 8,
+            width: 7,
+        };
+        let smaller = Rectangle {
+            length: 5,
+            width: 1,
+        };
+        assert!(!smaller.can_hold(&larger));
+    }
+}
+
 // fn area(rectangle: &Rectangle) -> u32 {
 //     rectangle.width * rectangle.length
 // }
