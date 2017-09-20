@@ -1,12 +1,13 @@
 use std::thread;
 use std::time::Duration;
+use std::collections::HashMap;
 
 struct Cacher<T>
 where
     T: Fn(i32) -> i32,
 {
     calculation: T,
-    value: Option<i32>,
+    value: HashMap<i32, i32>,
 }
 
 impl<T> Cacher<T>
@@ -16,18 +17,17 @@ where
     fn new(calculation: T) -> Cacher<T> {
         Cacher {
             calculation,
-            value: None,
+            value: HashMap::new(),
         }
     }
 
     fn value(&mut self, arg: i32) -> i32 {
-        match self.value {
-            Some(v) => v,
-            None => {
-                let v = (self.calculation)(arg);
-                self.value = Some(v);
-                v
-            }
+        if self.value.contains_key(&arg) {
+            self.value[&arg]
+        } else {
+            let v = (self.calculation)(arg);
+            &self.value.insert(arg, v);
+            v
         }
     }
 }
