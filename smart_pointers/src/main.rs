@@ -4,15 +4,15 @@ use std::cell::RefCell;
 
 #[derive(Debug)]
 enum List {
-    Cons(i32, Rc<List>),
+    Cons(Rc<RefCell<i32>>, Rc<List>),
     Nil,
 }
 
 use List::{Cons, Nil};
 
 fn main() {
-    let list = Cons(1, Rc::new(Cons(2, Rc::new(Cons(3, Rc::new(Nil))))));
-    println!("the list is {:?}", list);
+    // let list = Cons(1, Rc::new(Cons(2, Rc::new(Cons(3, Rc::new(Nil))))));
+    // println!("the list is {:?}", list);
 
     let mut x = 5;
     {
@@ -39,15 +39,26 @@ fn main() {
     println!("CustomSmartPointer created.");
     println!("Wait for it...");
 
-    let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+    let value1 = Rc::new(RefCell::new(5));
+    let value2 = Rc::new(RefCell::new(10));
+    let value3 = Rc::new(RefCell::new(3));
+    let a = Rc::new(Cons(value1.clone(), Rc::new(Cons(value2, Rc::new(Nil)))));
     println!("rc = {}", Rc::strong_count(&a));
-    let b = Cons(3, a.clone());
-    println!("rc after creating b = {}", Rc::strong_count(&a));
-    {
-        let c = Cons(4, a.clone());
-        println!("rc after creating c = {}", Rc::strong_count(&a));
-    }
-    println!("rc after c goes out of scope = {}", Rc::strong_count(&a));
+    let b = Cons(value3, a.clone());
+    *value1.borrow_mut() += 10;
+    println!("shared_list after = {:?}", a);
+    println!("b after = {:?}", b);
+    // println!("rc after creating b = {}", Rc::strong_count(&a));
+    // {
+    // let a = Rc::new(Cons(value1, Rc::new(Cons(value2, Rc::new(Nil)))));
+    // println!("rc = {}", Rc::strong_count(&a));
+    // let b = Cons(3, a.clone());
+    // println!("rc after creating b = {}", Rc::strong_count(&a));
+    // {
+    //     let c = Cons(4, a.clone());
+    //     println!("rc after creating c = {}", Rc::strong_count(&a));
+    // }
+    // println!("rc after c goes out of scope = {}", Rc::strong_count(&a));
 
     let refCellData = RefCell::new(5);
     demo(&refCellData);
